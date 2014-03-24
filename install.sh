@@ -313,6 +313,7 @@ fi
 ##########################################################################
 # Now we will set permissions, create upstart job, and launch daemon
 
+if $bluetooth; then
 set -e #this exits the script on error to prevent problems
 
 # set permissions on the btPing file to prevent others from editing it since it will be run as sudo without password (just in case)
@@ -322,6 +323,7 @@ sudo chown $(cat /etc/passwd | grep :0 | awk -F':' '{print $1}'):$(cat /etc/grou
 # now add btPing.sh to the sudoers file (CRUCIAL to get it to work)
 # this is done using visudo to protect the sudoers file
 printf "a\n$(whoami) ALL=(ALL) NOPASSWD: $PWD/btPing.sh\n.\n\nw\nq\n" | sudo EDITOR="ed" visudo
+fi
 
 # test if linux before prompting to continue
 if ( uname -a | grep -i "linux" ); then
