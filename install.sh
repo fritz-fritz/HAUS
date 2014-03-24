@@ -52,6 +52,14 @@ done
 ##########################################################################
 # Check for dependencies and install if possible
 
+# Check for curl and install if necessary
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' curl 2> /dev/null | grep "install ok installed" || echo "fail")
+echo " * Checking for curl: "$PKG_OK
+if [ "fail" == "$PKG_OK" ]; then
+echo -n "No curl. Setting up curl: "
+sudo apt-get --force-yes --yes install curl 2> /dev/null && echo "Success" || echo "fail"
+fi
+
 # Check for bluetooth and install if necessary
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' bluez 2> /dev/null | grep "install ok installed" || echo "fail")
 echo " * Checking for bluetooth stack (bluez): "$PKG_OK
