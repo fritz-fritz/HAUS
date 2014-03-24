@@ -1,0 +1,1 @@
+occupied=$(if [[ $(ping -c2 -t2 $ip1 | grep "64 bytes") != "" ]] || [[ $(ping -c2 -t2 $ip2 | grep "64 bytes") != "" ]]; then echo "Someone is home"; else echo "No one is home"; fi)
