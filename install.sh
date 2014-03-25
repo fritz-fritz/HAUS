@@ -130,10 +130,10 @@ else
 
 fi
 
-if $wemo && (( $(wemo list | wc -l) > 0 )); then
+if $wemo && (( $(wemo --timeout=10 --no-cache list 2> /dev/null | wc -l) > 0 )); then
     echo "WeMo Switches Detected"
     #echo $(wemo list | grep "Switch")
-    wemo list | grep "Switch"
+    wemo --no-cache list | grep "Switch"
 else
     echo -e "No WeMo Switch Detected"
     wemo=false
@@ -196,7 +196,11 @@ if $bluetooth && $wemo; then
     done
 
     cat $PWD/resources/startcurrent.sh >> HAUS.sh
-    echo "current_condition=\$(wemo -v switch \"${switch}\" status)" >> HAUS.sh
+    #echo "current_condition=\$(wemo -v switch \"${switch}\" status)" >> HAUS.sh
+    echo -e "count=0\nwhile (( \$count < 2 )) && ( [[ \$current_condition == \"\" ]] || [[ \$current_condition == \"x\" ]] )\ndo" >> HAUS.sh
+    echo -e "current_condition=\$(wemo -v --timeout=2 switch \"\${wemo_switch}\" status >/tmp/wemo.tmp 2>&1 && ( cat /tmp/wemo.tmp; rm /tmp/wemo.tmp ) || ( ( if [[ \$previous_condition == \"\" ]] && (( \$count < 1 )); then echo \"x\"; elif [[ \$previous_condition == \"\" ]]; then exit; else echo \"\$previous_condition\"; fi ); wemo clear > /dev/null 2>&1; rm /tmp/wemo.tmp ))" >> HAUS.sh
+    echo -e "let count++\ndone" >> HAUS.sh
+    echo "if [[ \$current_condition == \"\" ]]; then exit 1; fi" >> HAUS.sh
     cat $PWD/resources/currentcondition.sh >> HAUS.sh
 
     #now based on the count adjust this line...
@@ -254,6 +258,10 @@ elif [[ "$ifttt_location" == "true" ]] && $wemo; then
 
     cat $PWD/resources/startcurrent.sh >> HAUS.sh
     cat $PWD/resources/fetchoccupied.sh >> HAUS.sh
+    echo -e "count=0\nwhile (( \$count < 2 )) && ( [[ \$current_condition == \"\" ]] || [[ \$current_condition == \"x\" ]] )\ndo" >> HAUS.sh
+    echo -e "current_condition=\$(wemo -v --timeout=2 switch \"\${wemo_switch}\" status >/tmp/wemo.tmp 2>&1 && ( cat /tmp/wemo.tmp; rm /tmp/wemo.tmp ) || ( ( if [[ \$previous_condition == \"\" ]] && (( \$count < 1 )); then echo \"x\"; elif [[ \$previous_condition == \"\" ]]; then exit; else echo \"\$previous_condition\"; fi ); wemo clear > /dev/null 2>&1; rm /tmp/wemo.tmp ))" >> HAUS.sh
+    echo -e "let count++\ndone" >> HAUS.sh
+    echo "if [[ \$current_condition == \"\" ]]; then exit 1; fi" >> HAUS.sh
     cat $PWD/resources/currentcondition.sh >> HAUS.sh
     cat $PWD/resources/parseoccupied.sh >> HAUS.sh
     echo -e "# Now lets log the current status at home:\necho \"Current status at home: \"\$occupied" >> HAUS.sh
@@ -287,6 +295,9 @@ elif [[ "$ifttt_location" == "true" ]] && [[ "$ifttt_wemo" == "true" ]]; then
 elif [[ "$network" == "true" ]] && $wemo; then
     #Ping IP Addresses / Local WeMo Control
     echo "Using Ping IP Addresses & Local WeMo Control"
+
+    # Still need to make this section
+    #echo "current_condition=\$(wemo -v --timeout=2 switch \"${switch}\" status >/tmp/wemo.tmp 2>&1 && ( cat /tmp/wemo.tmp; rm /tmp/wemo.tmp ) || ( echo \"\\\$previous_condition\"; wemo clear > /dev/null 2>&1; rm /tmp/wemo.tmp ))" >> HAUS.sh
 
 elif [[ "$network" == "true" ]] && [[ "$ifttt_wemo" == "true" ]]; then
     #Ping IP Addresses / IFTTT WeMo Control
