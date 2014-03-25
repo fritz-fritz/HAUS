@@ -337,11 +337,11 @@ printf "a\n$(whoami) ALL=(ALL) NOPASSWD: $PWD/btPing.sh\n.\n\nw\nq\n" | sudo EDI
 fi
 
 # test if linux before prompting to continue
-if ( uname -a | grep -i "linux" ); then
+if ( uname -a | grep -i "linux"  >/dev/null 2>&1 ); then
     # now generate the upstart job
     cat resources/HAUS.conf > HAUS.conf
     echo "cd $PWD" >> HAUS.conf
-    echo "exec sudo ./HAUS.sh" >> HAUS.conf
+    echo "exec sudo bash HAUS.sh" >> HAUS.conf
     echo "end script" >> HAUS.conf
 
     # now move into place
