@@ -197,8 +197,8 @@ if $bluetooth && $wemo; then
 
     cat $PWD/resources/startcurrent.sh >> HAUS.sh
     #echo "current_condition=\$(wemo -v switch \"${switch}\" status)" >> HAUS.sh
-    echo -e "count=0\nwhile (( \$count < 2 )) && ( [[ \$current_condition == \"\" ]] || [[ \$current_condition == \"x\" ]] )\ndo" >> HAUS.sh
-    echo -e "current_condition=\$(wemo -v --timeout=2 switch \"\${wemo_switch}\" status >/tmp/wemo.tmp 2>&1 && ( cat /tmp/wemo.tmp; rm /tmp/wemo.tmp ) || ( ( if [[ \$previous_condition == \"\" ]] && (( \$count < 1 )); then echo \"x\"; elif [[ \$previous_condition == \"\" ]]; then exit; else echo \"\$previous_condition\"; fi ); wemo clear > /dev/null 2>&1; rm /tmp/wemo.tmp ))" >> HAUS.sh
+    echo -e "current_condition=\"\"\ncount=0\nwhile (( \$count < 2 )) && ( [[ \$current_condition == \"\" ]] || [[ \$current_condition == \"x\" ]] )\ndo" >> HAUS.sh
+    echo -e "current_condition=\$(wemo -v --timeout=2 switch \"\${wemo_switch}\" status >/tmp/wemo.tmp 2>&1 && ( cat /tmp/wemo.tmp; rm /tmp/wemo.tmp ) || ( ( if [[ \$previous_condition == \"\" ]] && (( \$count < 1 )); then echo \"x\"; elif [[ \$previous_condition == \"\" ]]; then exit 1; else echo \"\$set_condition\"; fi ); wemo clear > /dev/null 2>&1; rm /tmp/wemo.tmp ))" >> HAUS.sh
     echo -e "let count++\ndone" >> HAUS.sh
     echo "if [[ \$current_condition == \"\" ]]; then exit 1; fi" >> HAUS.sh
     cat $PWD/resources/currentcondition.sh >> HAUS.sh
@@ -258,8 +258,8 @@ elif [[ "$ifttt_location" == "true" ]] && $wemo; then
 
     cat $PWD/resources/startcurrent.sh >> HAUS.sh
     cat $PWD/resources/fetchoccupied.sh >> HAUS.sh
-    echo -e "count=0\nwhile (( \$count < 2 )) && ( [[ \$current_condition == \"\" ]] || [[ \$current_condition == \"x\" ]] )\ndo" >> HAUS.sh
-    echo -e "current_condition=\$(wemo -v --timeout=2 switch \"\${wemo_switch}\" status >/tmp/wemo.tmp 2>&1 && ( cat /tmp/wemo.tmp; rm /tmp/wemo.tmp ) || ( ( if [[ \$previous_condition == \"\" ]] && (( \$count < 1 )); then echo \"x\"; elif [[ \$previous_condition == \"\" ]]; then exit; else echo \"\$previous_condition\"; fi ); wemo clear > /dev/null 2>&1; rm /tmp/wemo.tmp ))" >> HAUS.sh
+    echo -e "current_condition=\"\"\ncount=0\nwhile (( \$count < 2 )) && ( [[ \$current_condition == \"\" ]] || [[ \$current_condition == \"x\" ]] )\ndo" >> HAUS.sh
+    echo -e "current_condition=\$(wemo -v --timeout=2 switch \"\${wemo_switch}\" status >/tmp/wemo.tmp 2>&1 && ( cat /tmp/wemo.tmp; rm /tmp/wemo.tmp ) || ( ( if [[ \$previous_condition == \"\" ]] && (( \$count < 1 )); then echo \"x\"; elif [[ \$previous_condition == \"\" ]]; then exit 1; else echo \"\$set_condition\"; fi ); wemo clear > /dev/null 2>&1; rm /tmp/wemo.tmp ))" >> HAUS.sh
     echo -e "let count++\ndone" >> HAUS.sh
     echo "if [[ \$current_condition == \"\" ]]; then exit 1; fi" >> HAUS.sh
     cat $PWD/resources/currentcondition.sh >> HAUS.sh

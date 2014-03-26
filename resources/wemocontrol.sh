@@ -16,7 +16,7 @@ fi
 
 if [[ "$occupied" == "Someone is home" ]]
 then
-if [[ "$current_condition" != "$set_condition" ]]
+if [[ "$current_condition" != "$set_condition" ]] && ( [[ "$previous_condition" != "" ]] || [[ "$previous_condition" == "$current_condition" ]] )
 then
 override=true
 else
